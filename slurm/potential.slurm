@@ -60,5 +60,5 @@ module load parallel-20170722
 cat run_potential.script | parallel -j 20
 
 # Let's run the MAF stuff too
-cd /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.5/potential_schedulers
+cd /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers
 cat run_sci_pot.script | parallel -j 20

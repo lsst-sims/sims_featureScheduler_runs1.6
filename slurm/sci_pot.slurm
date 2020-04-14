@@ -32,7 +32,7 @@
 
 ## Specify the working directory for this job
 
-#SBATCH --chdir=/gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.5/slurm
+#SBATCH --chdir=/gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/slurm
 
 ##turn on e-mail notification
 
@@ -51,7 +51,7 @@ setup sims_featureScheduler -t $USER -t sims_w_2020_02
 setup sims_maf -t $USER -t sims_w_2020_02
 setup sims_maf_contrib -t $USER -t sims_w_2020_02
 
-cd /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.5/potential_schedulers
+cd /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers
 
 ## run all the baseline commands in parallel
 module load parallel-20170722
