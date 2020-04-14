@@ -5,7 +5,7 @@ from lsst.sims.featureScheduler.modelObservatory import Model_observatory
 from lsst.sims.featureScheduler.schedulers import Core_scheduler, simple_filter_sched
 from lsst.sims.featureScheduler.utils import standard_goals, create_season_offset
 import lsst.sims.featureScheduler.basis_functions as bf
-from lsst.sims.featureScheduler.surveys import (Greedy_survey,
+from lsst.sims.featureScheduler.surveys import (Greedy_survey, generate_dd_surveys,
                                                 Blob_survey)
 from lsst.sims.featureScheduler import sim_runner
 import lsst.sims.featureScheduler.detailers as detailers
@@ -13,7 +13,6 @@ import sys
 import subprocess
 import os
 import argparse
-from ddf_baseline import generate_dd_surveys
 
 
 def simple_footprint(nside=32):
@@ -309,7 +308,7 @@ if __name__ == "__main__":
 
     extra_info['file executed'] = os.path.realpath(__file__)
 
-    fileroot = 'barebones'
+    fileroot = 'barebones_'
     file_end = 'v1.6_'
 
     footprints = simple_footprint()

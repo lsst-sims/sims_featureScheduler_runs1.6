@@ -5,7 +5,7 @@ from lsst.sims.featureScheduler.modelObservatory import Model_observatory
 from lsst.sims.featureScheduler.schedulers import Core_scheduler, simple_filter_sched
 from lsst.sims.featureScheduler.utils import standard_goals, NES_healpixels, create_season_offset, ra_dec_hp_map
 import lsst.sims.featureScheduler.basis_functions as bf
-from lsst.sims.featureScheduler.surveys import (Greedy_survey,
+from lsst.sims.featureScheduler.surveys import (Greedy_survey, generate_dd_surveys,
                                                 Blob_survey)
 from lsst.sims.featureScheduler import sim_runner
 import lsst.sims.featureScheduler.detailers as detailers
@@ -13,7 +13,6 @@ import sys
 import subprocess
 import os
 import argparse
-from ddf_baseline import generate_dd_surveys
 from astropy.coordinates import SkyCoord
 from astropy import units as u
 from lsst.utils import getPackageDir
