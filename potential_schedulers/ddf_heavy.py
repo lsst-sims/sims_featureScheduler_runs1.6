@@ -304,12 +304,13 @@ if __name__ == "__main__":
 
     fileroot = 'ddf_heavy_'
     file_end = 'v1.6_'
+    delays = [0, 0.5, 0.5]
 
     # Set up the DDF surveys to dither
     dither_detailer = detailers.Dither_detailer(per_night=per_night, max_dither=max_dither)
     details = [detailers.Camera_rot_detailer(min_rot=-camera_ddf_rot_limit, max_rot=camera_ddf_rot_limit), dither_detailer]
     ddfs = generate_dd_surveys(nside=nside, nexp=nexp, detailers=details,
-                               frac_total=ddf_frac_total, aggressive_frac=aggressive_frac)
+                               frac_total=ddf_frac_total, aggressive_frac=aggressive_frac, delays=delays)
 
     greedy = gen_greedy_surveys(nside, nexp=nexp)
     blobs = generate_blobs(nside, nexp=nexp)
