@@ -51,6 +51,8 @@ setup sims_featureScheduler -t $USER -t sims_w_2020_02
 setup sims_maf -t $USER -t sims_w_2020_02
 setup sims_maf_contrib -t $USER -t sims_w_2020_02
 
+## run all the baseline commands in parallel
+module load parallel-20170722
 
 # Let's run the MAF stuff too
 cd /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers
