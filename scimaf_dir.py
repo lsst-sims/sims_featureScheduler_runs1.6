@@ -28,7 +28,7 @@ if __name__ == "__main__":
         colmap = batches.ColMapDict()
         if os.path.isdir('sci_' + name):
             shutil.rmtree('sci_' + name)
-        bdict = batches.scienceRadarBatch()
+        bdict = batches.scienceRadarBatch(runName=name)
         resultsDb = db.ResultsDb(outDir='sci_' + name)
         group = mb.MetricBundleGroup(bdict, opsdb, outDir='sci_' + name, resultsDb=resultsDb, saveEarly=False)
         group.runAll(clearMemory=True, plotNow=True)
