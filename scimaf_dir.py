@@ -26,11 +26,11 @@ if __name__ == "__main__":
     for filename, name in zip(db_files, run_names):
         opsdb = db.OpsimDatabaseV4(filename)
         colmap = batches.ColMapDict()
-        if os.path.isdir('sci_' + name):
-            shutil.rmtree('sci_' + name)
+        if os.path.isdir(name + '_sci'):
+            shutil.rmtree(name + '_sci')
         bdict = batches.scienceRadarBatch(runName=name)
-        resultsDb = db.ResultsDb(outDir='sci_' + name)
-        group = mb.MetricBundleGroup(bdict, opsdb, outDir='name' + '_sci', resultsDb=resultsDb, saveEarly=False)
+        resultsDb = db.ResultsDb(outDir=name + '_sci')
+        group = mb.MetricBundleGroup(bdict, opsdb, outDir=name + '_sci', resultsDb=resultsDb, saveEarly=False)
         group.runAll(clearMemory=True, plotNow=True)
         resultsDb.close()
         opsdb.close()
