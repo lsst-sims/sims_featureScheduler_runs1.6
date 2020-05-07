@@ -79,7 +79,7 @@ def _spin_fields(lon=None, lat=None, lon2=None):
 
         # Rebuild the kdtree with the new positions
         # XXX-may be doing some ra,dec to conversions xyz more than needed.
-        return np.round(ra, decimals=11), np.round(dec, decimals=11)
+        return np.round(ra, decimals=13), np.round(dec, decimals=13)
 
 
 if __name__ == "__main__":
