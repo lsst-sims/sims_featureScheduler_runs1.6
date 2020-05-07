@@ -1,10 +1,22 @@
 import numpy as np
-from lsst.sims.featureScheduler.thomson import xyz2thetaphi, thetaphi2xyz
 from lsst.sims.featureScheduler.utils import read_fields
 
 np.random.seed(42)
 
 fields_init = read_fields()
+
+
+def thetaphi2xyz(theta, phi):
+    x = np.sin(phi)*np.cos(theta)
+    y = np.sin(phi)*np.sin(theta)
+    z = np.cos(phi)
+    return x, y, z
+
+
+def xyz2thetaphi(x, y, z):
+    phi = np.arccos(z)
+    theta = np.arctan2(y, x)
+    return theta, phi
 
 
 def rotx(theta, x, y, z):
@@ -45,15 +57,19 @@ def _spin_fields(lon=None, lat=None, lon2=None):
         ra = (fields_init['RA'] + lon) % (2.*np.pi)
         dec = fields_init['dec'] + 0
 
-
-        return ra, dec
+        # ra and dec here are the same!
         
+
         # Now to rotate ra and dec about the x-axis
         x, y, z = thetaphi2xyz(ra, dec+np.pi/2.)
         xp, yp, zp = rotx(lat, x, y, z)
         theta, phi = xyz2thetaphi(xp, yp, zp)
+
+        return theta, phi
         dec = phi - np.pi/2
         ra = theta + np.pi
+
+
 
         # One more RA rotation
         ra = (ra + lon2) % (2.*np.pi)
