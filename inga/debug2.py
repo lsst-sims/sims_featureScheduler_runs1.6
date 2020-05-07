@@ -63,4 +63,8 @@ def _spin_fields(lon=None, lat=None, lon2=None):
 if __name__ == "__main__":
 
     ra, dec = _spin_fields()
-    import pdb ; pdb.set_trace()
+    f = open('outcheck.txt', 'w')
+    for raa, decc in zip(ra, dec):
+        f.write('%f, %f \n' % (raa, decc))
+    f.close()
+
