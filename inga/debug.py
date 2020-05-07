@@ -13,7 +13,7 @@ import sys
 import subprocess
 import os
 import argparse
-
+import copy
 
 def gen_greedy_surveys(nside=32, nexp=1, exptime=30., filters=['r', 'i', 'z', 'y'],
                        camera_rot_limits=[-80., 80.],
@@ -293,16 +293,26 @@ def run_sched(surveys, survey_length=365.25, nside=32, fileroot='baseline_', ver
     filter_sched = simple_filter_sched(illum_limit=illum_limit)
     observatory = Model_observatory(nside=nside)
 
+    conditions_init = copy.deepcopy(observatory.return_conditions())
+
     scheduler.update_conditions(observatory.return_conditions())
     desired_obs = scheduler.request_observation(mjd=observatory.mjd)
-    print(desired_obs)
+    #print(desired_obs)
 
     completed_obs, new_night = observatory.observe(desired_obs)
-    print(completed_obs)
-
+    #print(completed_obs)
     # Check if there's any difference between where we wanted to point, and where it pointed
     for key in ['RA', 'dec', 'rotSkyPos']:
         print(key, desired_obs[key]-completed_obs[key], desired_obs[key][0])
+    
+
+
+    conditions_final = observatory.return_conditions()
+
+    print(scheduler.survey_lists[2][-2].fields['dec'][3410])
+
+
+    import pdb ; pdb.set_trace()
 
     #observatory, scheduler, observations = sim_runner(observatory, scheduler,
     #                                                  survey_length=survey_length,
@@ -310,6 +320,8 @@ def run_sched(surveys, survey_length=365.25, nside=32, fileroot='baseline_', ver
      #                                                 delete_past=True, n_visit_limit=n_visit_limit,
      #                                                 verbose=verbose, extra_info=extra_info,
      #                                                 filter_scheduler=filter_sched)
+
+
 
 
 if __name__ == "__main__":
