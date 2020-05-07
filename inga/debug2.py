@@ -62,7 +62,7 @@ def _spin_fields(lon=None, lat=None, lon2=None):
 
         # Now to rotate ra and dec about the x-axis
         x, y, z = thetaphi2xyz(ra, dec+np.pi/2.)
-        return np.round(x, decimals=14), np.round(y, decimals=14), np.round(z, decimals=14)
+        return np.round(x, decimals=12), np.round(y, decimals=12), np.round(z, decimals=12)
         xp, yp, zp = rotx(lat, x, y, z)
         # xp, yp, zp don't match here
         theta, phi = xyz2thetaphi(xp, yp, zp)
