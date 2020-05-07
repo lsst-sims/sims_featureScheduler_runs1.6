@@ -285,6 +285,16 @@ def nes_light_footprints(nside=None):
     return result
 
 
+def rotx(theta, x, y, z):
+    """rotate the x,y,z points theta radians about x axis"""
+    sin_t = np.sin(theta)
+    cos_t = np.cos(theta)
+    xp = x
+    yp = y*cos_t+z*sin_t
+    zp = -y*sin_t+z*cos_t
+    return xp, yp, zp
+
+
 def run_sched(surveys, survey_length=365.25, nside=32, fileroot='baseline_', verbose=False,
               extra_info=None, illum_limit=40.):
     years = np.round(survey_length/365.25)
