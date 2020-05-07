@@ -62,6 +62,7 @@ def _spin_fields(lon=None, lat=None, lon2=None):
 
         # Now to rotate ra and dec about the x-axis
         x, y, z = thetaphi2xyz(ra, dec+np.pi/2.)
+        return x, y, z
         #return np.round(x, decimals=11), np.round(y, decimals=11), np.round(z, decimals=11)
 
         xp, yp, zp = rotx(lat, x, y, z)
@@ -84,7 +85,7 @@ def _spin_fields(lon=None, lat=None, lon2=None):
 
 if __name__ == "__main__":
 
-    three = False
+    three = True
     f = open('outcheck.txt', 'w')
     if three:
         x,y,z = _spin_fields()

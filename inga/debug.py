@@ -309,10 +309,10 @@ def run_sched(surveys, survey_length=365.25, nside=32, fileroot='baseline_', ver
 
     scheduler.update_conditions(observatory.return_conditions())
     desired_obs = scheduler.request_observation(mjd=observatory.mjd)
-    #print(desired_obs)
+    print(desired_obs)
 
     completed_obs, new_night = observatory.observe(desired_obs)
-    #print(completed_obs)
+    print(completed_obs)
     # Check if there's any difference between where we wanted to point, and where it pointed
     for key in ['RA', 'dec', 'rotSkyPos']:
         print(key, desired_obs[key]-completed_obs[key], desired_obs[key][0])
