@@ -65,6 +65,6 @@ if __name__ == "__main__":
     ra, dec = _spin_fields()
     f = open('outcheck.txt', 'w')
     for raa, decc in zip(ra, dec):
-        f.write('%f, %f \n' % (raa, decc))
+        f.write('%.15f, %.15f \n' % (raa, decc))
     f.close()
 
