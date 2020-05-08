@@ -303,7 +303,7 @@ def run_sched(surveys, survey_length=365.25, nside=32, fileroot='baseline_', ver
     filter_sched = simple_filter_sched(illum_limit=illum_limit)
     observatory = Model_observatory(nside=nside)
 
-    import pdb ; pdb.set_trace()
+    
 
     conditions_init = copy.deepcopy(observatory.return_conditions())
 
