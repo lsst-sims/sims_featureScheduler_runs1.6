@@ -62,6 +62,7 @@ def _spin_fields(lon=None, lat=None, lon2=None):
 
         # Now to rotate ra and dec about the x-axis
         x, y, z = thetaphi2xyz(ra, dec+np.pi/2.)
+        import pdb ; pdb.set_trace()
         return x, y, z
         #return np.round(x, decimals=11), np.round(y, decimals=11), np.round(z, decimals=11)
 
