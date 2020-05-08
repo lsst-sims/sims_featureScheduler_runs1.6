@@ -18,7 +18,7 @@ from astropy import units as u
 from lsst.sims.utils import _hpid2RaDec
 
 
-def gen_greedy_surveys(nside=32, nexp=1, exptime=30., filters=['r', 'i', 'z', 'y'],
+def gen_greedy_surveys(nside=32, nexp=1, exptime=30., filters=['i', 'z', 'y'],
                        camera_rot_limits=[-80., 80.],
                        shadow_minutes=60., max_alt=76., moon_distance=30., ignore_obs=['DD', 'twilight_neo'],
                        m5_weight=3., footprint_weight=0.3, slewtime_weight=3.,
@@ -102,7 +102,7 @@ def gen_greedy_surveys(nside=32, nexp=1, exptime=30., filters=['r', 'i', 'z', 'y
 
 
 def generate_blobs(nside, nexp=1, exptime=30., filter1s=['u', 'u', 'g', 'r', 'i', 'z', 'y'],
-                   filter2s=['g', 'r', 'r', 'i', 'z', 'y', 'y'], pair_time=22.,
+                   filter2s=['g', 'i', 'r', 'r', 'z', 'y', 'y'], pair_time=22.,
                    camera_rot_limits=[-80., 80.], n_obs_template=3,
                    season=300., season_start_hour=-4., season_end_hour=2.,
                    shadow_minutes=60., max_alt=76., moon_distance=30., ignore_obs=['DD', 'twilight_neo'],
