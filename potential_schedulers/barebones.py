@@ -26,7 +26,7 @@ def simple_footprint(nside=32):
 
 
 def gen_greedy_surveys(nside=32, nexp=1, exptime=30., filters=['r', 'i', 'z', 'y'],
-                       camera_rot_limits=[-80., 80.],
+                       camera_rot_limits=[0., 0.],
                        shadow_minutes=60., max_alt=76., moon_distance=30., ignore_obs='DD',
                        m5_weight=3., footprint_weight=0.3, slewtime_weight=3.,
                        stayfilter_weight=3., footprints=None):
@@ -110,7 +110,7 @@ def gen_greedy_surveys(nside=32, nexp=1, exptime=30., filters=['r', 'i', 'z', 'y
 
 def generate_blobs(nside, nexp=1, exptime=30., filter1s=['u', 'g', 'r', 'i', 'z', 'y'],
                    filter2s=[None, 'g', 'r', 'i', 'z', None], pair_time=22.,
-                   camera_rot_limits=[-80., 80.], n_obs_template=3,
+                   camera_rot_limits=[0., 0.], n_obs_template=3,
                    season=300., season_start_hour=-4., season_end_hour=2.,
                    shadow_minutes=60., max_alt=76., moon_distance=30., ignore_obs='DD',
                    m5_weight=6., footprint_weight=0.6, slewtime_weight=3.,
@@ -294,7 +294,7 @@ if __name__ == "__main__":
     nside = 32
     per_night = True  # Dither DDF per night
     nexp = 1  # All observations
-    camera_ddf_rot_limit = 75.
+    camera_ddf_rot_limit = 0.
 
     extra_info = {}
     exec_command = ''
