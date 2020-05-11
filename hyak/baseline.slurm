@@ -18,7 +18,7 @@
 
 ## Walltime (hours:min:sec) Do not specify a walltime substantially more than your job needs.
 
-#SBATCH --time=24:00:00
+#SBATCH --time=8:00:00
 
 ## Memory per node. It is important to specify the memory since the default memory is very small.
 
@@ -56,6 +56,6 @@ cd /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/hyak
 
 ## run all the baseline commands in parallel
 module load parallel-20170722
-## only need to do 5 at a time, since there are only that many in the list
-python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers/baseline.py --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/hyak
+
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers/baseline.py --survey_length 365 --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/hyak
 
