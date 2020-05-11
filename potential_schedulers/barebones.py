@@ -80,7 +80,7 @@ def gen_greedy_surveys(nside=32, nexp=1, exptime=30., filters=['r', 'i', 'z', 'y
         sum_footprints += np.sum(footprints[key])
 
     surveys = []
-    detailer = detailers.Camera_rot_detailer(min_rot=np.min(camera_rot_limits), max_rot=np.max(camera_rot_limits))
+    detailer = detailers.Zero_rot_detailer()
 
     for filtername in filters:
         bfs = []
@@ -179,8 +179,7 @@ def generate_blobs(nside, nexp=1, exptime=30., filter1s=['u', 'g', 'r', 'i', 'z'
     times_needed = [pair_time, pair_time*2]
     for filtername, filtername2 in zip(filter1s, filter2s):
         detailer_list = []
-        detailer_list.append(detailers.Camera_rot_detailer(min_rot=np.min(camera_rot_limits),
-                                                           max_rot=np.max(camera_rot_limits)))
+        detailer_list.append(detailers.Zero_rot_detailer())
         detailer_list.append(detailers.Close_alt_detailer())
         # List to hold tuples of (basis_function_object, weight)
         bfs = []
@@ -315,7 +314,7 @@ if __name__ == "__main__":
 
     # Set up the DDF surveys to dither
     dither_detailer = detailers.Dither_detailer(per_night=per_night, max_dither=max_dither)
-    details = [detailers.Camera_rot_detailer(min_rot=-camera_ddf_rot_limit, max_rot=camera_ddf_rot_limit), dither_detailer]
+    details = [detailers.Zero_rot_detailer(), dither_detailer]
     ddfs = generate_dd_surveys(nside=nside, nexp=nexp, detailers=details, frac_total=0.0045, aggressive_frac=0.002)
 
     greedy = gen_greedy_surveys(nside, nexp=nexp, footprints=footprints)
