@@ -57,5 +57,5 @@ cd /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/hyak
 ## run all the baseline commands in parallel
 module load parallel-20170722
 
-python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers/baseline.py --survey_length 365 --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/hyak
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers/baseline.py --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/hyak
 
