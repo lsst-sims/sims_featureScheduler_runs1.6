@@ -349,7 +349,7 @@ if __name__ == "__main__":
 
     observatory = Model_observatory(nside=nside)
     sco = schema_converter()
-    observations = sco.opsim2obs('baseline_nexp1_v1.6_1yrs.db')
+    observations = sco.opsim2obs('baseline_nexp1_v1.6_10yrs.db')
     indx = 64840-1
     for obs in observations[0:indx]:
         scheduler.add_observation(obs)
