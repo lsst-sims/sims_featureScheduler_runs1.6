@@ -351,18 +351,18 @@ if __name__ == "__main__":
     sco = schema_converter()
     observations = sco.opsim2obs('baseline_nexp1_v1.6_1yrs.db')
     indx = 64840
-    for i in np.arange(indx):
-        scheduler.add_observation(observations[i])
-    observatory.mjd = observations[indx]['mjd']
+    for obs in observations[0:indx]:
+        scheduler.add_observation(obs)
+    observatory.mjd = obs['mjd']
     # Observatory starts parked, so need to send an expose command to slew to the correct position
-    temp = observatory.observe(observations[indx])
+    temp = observatory.observe(obs)
     # It took some time to make that slew, so reset the time again
     observatory.mjd = observations[indx]['mjd']
-    should_match_obs, new_night = observatory.observe(observations[indx])
+    should_match_obs, new_night = observatory.observe(obs)
     
     conditions = observatory.return_conditions()
     scheduler.update_conditions(conditions)
     for survey in scheduler.survey_lists[-1]:
         print(survey.filtername, np.nanmax(survey.calc_reward_function(conditions)))
-    
+
     import pdb ; pdb.set_trace()
