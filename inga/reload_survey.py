@@ -1,9 +1,11 @@
+## let's see if we can find where/why the process is diverging.  Looks like it starts with greedy, so that's helpful!
+
 import numpy as np
 import matplotlib.pylab as plt
 import healpy as hp
 from lsst.sims.featureScheduler.modelObservatory import Model_observatory
 from lsst.sims.featureScheduler.schedulers import Core_scheduler, simple_filter_sched
-from lsst.sims.featureScheduler.utils import standard_goals, create_season_offset
+from lsst.sims.featureScheduler.utils import standard_goals, create_season_offset, generate_goal_map, schema_converter
 import lsst.sims.featureScheduler.basis_functions as bf
 from lsst.sims.featureScheduler.surveys import (Greedy_survey, generate_dd_surveys,
                                                 Blob_survey)
@@ -15,18 +17,8 @@ import os
 import argparse
 
 
-def simple_footprint(nside=32):
-    """Make a WFD-only footprint
-    """
-    sg = standard_goals(nside=nside)
-    non_wfd_pix = np.where(sg['r'] != 1)
-    for key in sg:
-        sg[key][non_wfd_pix] = 0
-    return sg
-
-
 def gen_greedy_surveys(nside=32, nexp=1, exptime=30., filters=['r', 'i', 'z', 'y'],
-                       camera_rot_limits=[0., 0.],
+                       camera_rot_limits=[-80., 80.],
                        shadow_minutes=60., max_alt=76., moon_distance=30., ignore_obs='DD',
                        m5_weight=3., footprint_weight=0.3, slewtime_weight=3.,
                        stayfilter_weight=3., footprints=None):
@@ -80,7 +72,7 @@ def gen_greedy_surveys(nside=32, nexp=1, exptime=30., filters=['r', 'i', 'z', 'y
         sum_footprints += np.sum(footprints[key])
 
     surveys = []
-    detailer = detailers.Zero_rot_detailer()
+    detailer = detailers.Camera_rot_detailer(min_rot=np.min(camera_rot_limits), max_rot=np.max(camera_rot_limits))
 
     for filtername in filters:
         bfs = []
@@ -108,9 +100,9 @@ def gen_greedy_surveys(nside=32, nexp=1, exptime=30., filters=['r', 'i', 'z', 'y
     return surveys
 
 
-def generate_blobs(nside, nexp=1, exptime=30., filter1s=['u', 'g', 'r', 'i', 'z', 'y'],
-                   filter2s=[None, 'g', 'r', 'i', 'z', None], pair_time=22.,
-                   camera_rot_limits=[0., 0.], n_obs_template=3,
+def generate_blobs(nside, nexp=1, exptime=30., filter1s=['u', 'u', 'g', 'r', 'i', 'z', 'y'],
+                   filter2s=['g', 'r', 'r', 'i', 'z', 'y', 'y'], pair_time=22.,
+                   camera_rot_limits=[-80., 80.], n_obs_template=3,
                    season=300., season_start_hour=-4., season_end_hour=2.,
                    shadow_minutes=60., max_alt=76., moon_distance=30., ignore_obs='DD',
                    m5_weight=6., footprint_weight=0.6, slewtime_weight=3.,
@@ -179,7 +171,8 @@ def generate_blobs(nside, nexp=1, exptime=30., filter1s=['u', 'g', 'r', 'i', 'z'
     times_needed = [pair_time, pair_time*2]
     for filtername, filtername2 in zip(filter1s, filter2s):
         detailer_list = []
-        detailer_list.append(detailers.Zero_rot_detailer())
+        detailer_list.append(detailers.Camera_rot_detailer(min_rot=np.min(camera_rot_limits),
+                                                           max_rot=np.max(camera_rot_limits)))
         detailer_list.append(detailers.Close_alt_detailer())
         # List to hold tuples of (basis_function_object, weight)
         bfs = []
@@ -258,6 +251,82 @@ def generate_blobs(nside, nexp=1, exptime=30., filter1s=['u', 'g', 'r', 'i', 'z'
     return surveys
 
 
+def nes_light_footprints(nside=None):
+    """
+    A quick function to generate the "standard" goal maps. This is the traditional WFD/mini survey footprint.
+    """
+
+    NES_scaledown = 2.
+    SCP_scaledown = 1.5
+
+    result = {}
+    result['u'] = generate_goal_map(nside=nside, NES_fraction=0./NES_scaledown,
+                                    WFD_fraction=0.31, SCP_fraction=0.15/SCP_scaledown,
+                                    GP_fraction=0.15,
+                                    wfd_dec_min=-62.5, wfd_dec_max=3.6)
+    result['g'] = generate_goal_map(nside=nside, NES_fraction=0.2/NES_scaledown,
+                                    WFD_fraction=0.44, SCP_fraction=0.15/SCP_scaledown,
+                                    GP_fraction=0.15,
+                                    wfd_dec_min=-62.5, wfd_dec_max=3.6)
+    result['r'] = generate_goal_map(nside=nside, NES_fraction=0.46/NES_scaledown,
+                                    WFD_fraction=1.0, SCP_fraction=0.15/SCP_scaledown,
+                                    GP_fraction=0.15,
+                                    wfd_dec_min=-62.5, wfd_dec_max=3.6)
+    result['i'] = generate_goal_map(nside=nside, NES_fraction=0.46/NES_scaledown,
+                                    WFD_fraction=1.0, SCP_fraction=0.15/SCP_scaledown,
+                                    GP_fraction=0.15,
+                                    wfd_dec_min=-62.5, wfd_dec_max=3.6)
+    result['z'] = generate_goal_map(nside=nside, NES_fraction=0.4/NES_scaledown,
+                                    WFD_fraction=0.9, SCP_fraction=0.15/SCP_scaledown,
+                                    GP_fraction=0.15,
+                                    wfd_dec_min=-62.5, wfd_dec_max=3.6)
+    result['y'] = generate_goal_map(nside=nside, NES_fraction=0./NES_scaledown,
+                                    WFD_fraction=0.9, SCP_fraction=0.15/SCP_scaledown,
+                                    GP_fraction=0.15,
+                                    wfd_dec_min=-62.5, wfd_dec_max=3.6)
+    return result
+
+
+def make_scheduler(scale_down=False, max_dither=0.7, nexp=1):
+    nside = 32
+    per_night = True  # Dither DDF per night
+
+    camera_ddf_rot_limit = 75.
+
+    extra_info = {}
+    exec_command = ''
+    for arg in sys.argv:
+        exec_command += ' ' + arg
+    extra_info['exec command'] = exec_command
+    try:
+        extra_info['git hash'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
+    except subprocess.CalledProcessError:
+        extra_info['git hash'] = 'Not in git repo'
+
+    extra_info['file executed'] = os.path.realpath(__file__)
+
+    fileroot = 'baseline_nexp%i_' % nexp
+    file_end = 'v1.6_'
+
+    if scale_down:
+        footprints = nes_light_footprints(nside=nside)
+        fileroot = fileroot +'scaleddown_'
+    else:
+        footprints = standard_goals(nside=nside)
+
+    # Set up the DDF surveys to dither
+    dither_detailer = detailers.Dither_detailer(per_night=per_night, max_dither=max_dither)
+    details = [detailers.Camera_rot_detailer(min_rot=-camera_ddf_rot_limit, max_rot=camera_ddf_rot_limit), dither_detailer]
+    ddfs = generate_dd_surveys(nside=nside, nexp=nexp, detailers=details)
+
+    greedy = gen_greedy_surveys(nside, nexp=nexp, footprints=footprints)
+    blobs = generate_blobs(nside, nexp=nexp, footprints=footprints)
+    surveys = [ddfs, blobs, greedy]
+    scheduler = Core_scheduler(surveys, nside=nside)
+    return scheduler
+
+
+
 def run_sched(surveys, survey_length=365.25, nside=32, fileroot='baseline_', verbose=False,
               extra_info=None, illum_limit=40.):
     years = np.round(survey_length/365.25)
@@ -275,51 +344,25 @@ def run_sched(surveys, survey_length=365.25, nside=32, fileroot='baseline_', ver
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--verbose", dest='verbose', action='store_true')
-    parser.set_defaults(verbose=False)
-    parser.add_argument("--survey_length", type=float, default=365.25*10)
-    parser.add_argument("--outDir", type=str, default="")
-    parser.add_argument("--maxDither", type=float, default=0.7, help="Dither size for DDFs (deg)")
-    parser.add_argument("--moon_illum_limit", type=float, default=40., help="illumination limit to remove u-band")
-
-    args = parser.parse_args()
-    survey_length = args.survey_length  # Days
-    outDir = args.outDir
-    verbose = args.verbose
-    max_dither = args.maxDither
-    illum_limit = args.moon_illum_limit
-
     nside = 32
-    per_night = True  # Dither DDF per night
-    nexp = 1  # All observations
-    camera_ddf_rot_limit = 0.
+    scheduler = make_scheduler()
 
-    extra_info = {}
-    exec_command = ''
-    for arg in sys.argv:
-        exec_command += ' ' + arg
-    extra_info['exec command'] = exec_command
-    try:
-        extra_info['git hash'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
-    except subprocess.CalledProcessError:
-        extra_info['git hash'] = 'Not in git repo'
+    observatory = Model_observatory(nside=nside)
+    sco = schema_converter()
+    observations = sco.opsim2obs('baseline_nexp1_v1.6_1yrs.db')
+    indx = 64840-1
+    for obs in observations[0:indx]:
+        scheduler.add_observation(obs)
+    observatory.mjd = obs['mjd']
+    # Observatory starts parked, so need to send an expose command to slew to the correct position
+    temp = observatory.observe(obs)
+    # It took some time to make that slew, so reset the time again
+    observatory.mjd = observations[indx]['mjd']
+    should_match_obs, new_night = observatory.observe(obs)
+    
+    conditions = observatory.return_conditions()
+    scheduler.update_conditions(conditions)
+    for survey in scheduler.survey_lists[-1]:
+        print(survey.filtername, np.nanmax(survey.calc_reward_function(conditions)))
 
-    extra_info['file executed'] = os.path.realpath(__file__)
-
-    fileroot = 'barebones_'
-    file_end = 'v1.6_'
-
-    footprints = simple_footprint()
-
-    # Set up the DDF surveys to dither
-    dither_detailer = detailers.Dither_detailer(per_night=per_night, max_dither=max_dither)
-    details = [detailers.Zero_rot_detailer(), dither_detailer]
-    ddfs = generate_dd_surveys(nside=nside, nexp=nexp, detailers=details, frac_total=0.0045, aggressive_frac=0.002)
-
-    greedy = gen_greedy_surveys(nside, nexp=nexp, footprints=footprints)
-    blobs = generate_blobs(nside, nexp=nexp, footprints=footprints)
-    surveys = [ddfs, blobs, greedy]
-    run_sched(surveys, survey_length=survey_length, verbose=verbose,
-              fileroot=os.path.join(outDir, fileroot+file_end), extra_info=extra_info,
-              nside=nside, illum_limit=illum_limit)
+    import pdb ; pdb.set_trace()
