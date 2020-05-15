@@ -7,3 +7,4 @@ python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential
 python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers/ddf_heavy.py --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers
 python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers/mw_heavy.py --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers
 python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers/ss_heavy.py --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers/combo_dust.py --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers
