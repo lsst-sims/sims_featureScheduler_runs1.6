@@ -69,6 +69,8 @@ def combo_dust_fp(nside=32, weights={'u': [0.31, 0.13, False], 'g': [0.44, 0.13]
                   'y': [0.9, 0.25, False]}, dust_limit=0.19):
     """
     Based on the Olsen et al Cadence White Paper
+
+    XXX---need to refactor and get rid of all the magic numbers everywhere.
     """
 
     ebvDataDir = getPackageDir('sims_maps')

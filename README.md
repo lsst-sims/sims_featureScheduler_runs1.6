@@ -59,3 +59,14 @@ Give as much time as possible to the DDF surveys.  Looks like it might have hit 
 * only i,z,y in twilght
 * include r+r pairs
 
+### Combo Dust
+
+A possibly better baseline to build off of.
+
+* 20,000 sq degree WFD area that includes: 18,000 sq degrees of low extinction area, a bulge+ecliptic swath, a dusty swath through the outer disk (good for Ubercal and Galactic science), and the Magellenic Clouds.
+* NES region for solar system objects
+* A very shallow northen stripe so there can be templates for any ToO events in the north
+* Twilight time avoids the ecliptic, so nearly all eclitic mesurements are taken in pairs.
+* Coverage of dusty and high airmass SCP, at about 300 total visits.
+
+I think the 20k WFD should make it easier to recover in the event of extended downtime or pathological weather. There are WFD pixels at all RA that could be cut, and their remaining time re-allocated to areas that would otherwise not make it to the SRD value.
