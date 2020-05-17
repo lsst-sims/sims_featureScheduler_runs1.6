@@ -19,54 +19,17 @@ from lsst.utils import getPackageDir
 from lsst.sims.utils import _hpid2RaDec
 
 
-def nes_footprint(nside=32):
-    """
-    A quick function to generate the NES footprint
-    """
-
-    weight_dict = {'u': 0, 'g': 0.2, 'r': 0.46, 'i': 0.46, 'z': 0.4, 'y': 0}
-    NES_min_EB = -30.0
-    NES_max_EB = 10.0
-    NES_dec_min = -20
-
-    ra, dec = ra_dec_hp_map(nside=nside)
-
-    coord = SkyCoord(ra=ra*u.rad, dec=dec*u.rad)
-    gal_lon, gal_lat = coord.galactic.l.deg, coord.galactic.b.deg
-
-    nes = NES_healpixels(nside=nside, min_EB=NES_min_EB, max_EB=NES_max_EB,
-                         dec_min=NES_dec_min)
-    nes_pix = np.where((nes > 0) & ((gal_lon > 90.) & (gal_lon < 270.)))[0]
-    ze = np.zeros(hp.nside2npix(nside), dtype=float)
-
-    result = {}
-    for key in weight_dict:
-        result[key] = ze + 0
-        result[key][nes_pix] = weight_dict[key]
-    return result
-
-
-def ecliptic_target(nside=32, dist_to_eclip=15., dec_max=0., north_ignore=True):
-    """Generate a target_map for the area around the ecliptic
-    """
-
-    ra, dec = _hpid2RaDec(nside, np.arange(hp.nside2npix(nside)))
-    result = np.zeros(ra.size)
-    coord = SkyCoord(ra=ra*u.rad, dec=dec*u.rad)
-    eclip_lat = coord.barycentrictrueecliptic.lat.radian
-    good = np.where((np.abs(eclip_lat) < np.radians(dist_to_eclip)) &
-                    (dec < np.radians(dec_max)))
-    result[good] += 1
-
-    if north_ignore:
-        result[np.where(ra < np.pi)] = 0
-
-    return result
-
-
-def combo_dust_fp(nside=32, weights={'u': [0.31, 0.13, False], 'g': [0.44, 0.13],
-                  'r': [1., 0.25], 'i': [1., 0.25], 'z': [0.9, 0.25],
-                  'y': [0.9, 0.25, False]}, dust_limit=0.19):
+def combo_dust_fp(nside=32,
+                  wfd_weights={'u': 0.31, 'g': 0.44, 'r': 1., 'i': 1., 'z': 0.9, 'y': 0.9},
+                  wfd_dust_weights={'u': 0.13, 'g': 0.13, 'r': 0.25, 'i': 0.25, 'z': 0.25, 'y': 0.25},
+                  nes_dist_eclip_n=10., nes_dist_eclip_s=-30., nes_south_limit=-5, ses_dist_eclip=10.,
+                  nes_weights={'u': 0, 'g': 0.2, 'r': 0.46, 'i': 0.46, 'z': 0.4, 'y': 0},
+                  dust_limit=0.19,
+                  wfd_north_dec=12.4, wfd_south_dec=-72.25,
+                  mc_wfd=True,
+                  outer_bridge_l=240, outer_bridge_width=10., outer_bridge_alt=13.,
+                  bulge_lon_span=20., bulge_alt_span=10.,
+                  north_weights={'g': 0.03, 'r': 0.03, 'i': 0.03}, north_limit=30.):
     """
     Based on the Olsen et al Cadence White Paper
 
@@ -78,72 +41,85 @@ def combo_dust_fp(nside=32, weights={'u': [0.31, 0.13, False], 'g': [0.44, 0.13]
     dustmap = np.load(os.path.join(ebvDataDir, filename))['ebvMap']
 
     # wfd covers -72.25 < dec < 12.4. Avoid galactic plane |b| > 15 deg
-    wfd_north = np.radians(12.4)
-    wfd_south = np.radians(-72.25)
+    wfd_north = wfd_north_dec
+    wfd_south = wfd_south_dec
 
-    # Set full north South, from +30 where that gets us a stripe up north
-    full_north = np.radians(12.)
+    ra, dec = np.degrees(ra_dec_hp_map(nside=nside))
+    WFD_no_dust = np.zeros(ra.size)
+    WFD_dust = np.zeros(ra.size)
 
-    ra, dec = ra_dec_hp_map(nside=nside)
-    total_map = np.zeros(ra.size)
-
-    coord = SkyCoord(ra=ra*u.rad, dec=dec*u.rad)
+    coord = SkyCoord(ra=ra*u.deg, dec=dec*u.deg)
     gal_lon, gal_lat = coord.galactic.l.deg, coord.galactic.b.deg
 
-    bulge = np.where(((gal_lon < 15) | (gal_lon > 360-15)) & (np.abs(gal_lat) < 10))
-
     # let's make a first pass here
+    WFD_no_dust[np.where((dec > wfd_south) &
+                         (dec < wfd_north) &
+                         (dustmap < dust_limit))] = 1.
 
-    total_map[np.where(dec < full_north)] = 1e-6
-    total_map[np.where((dec > wfd_south) &
-                       (dec < wfd_north) &
-                       (dustmap < dust_limit))] = 1.
+    WFD_dust[np.where((dec > wfd_south) &
+                      (dec < wfd_north) &
+                      (dustmap > dust_limit))] = 1.
+    WFD_dust[np.where(dec < wfd_south)] = 1.
 
-    # Now let's break it down by filter
+    # Fill in values for WFD and WFD_dusty
     result = {}
+    for key in wfd_weights:
+        result[key] = WFD_no_dust + 0.
+        result[key][np.where(result[key] == 1)] = wfd_weights[key]
+        result[key][np.where(WFD_dust == 1)] = wfd_dust_weights[key]
 
-    for key in weights:
-        result[key] = total_map + 0.
-        result[key][np.where(result[key] == 1)] = weights[key][0]
-        result[key][np.where(result[key] == 1e-6)] = weights[key][1]
-        if len(weights[key]) == 3:
-            result[key][np.where(dec > wfd_north)] = 0.
+    coord = SkyCoord(ra=ra*u.deg, dec=dec*u.deg)
+    eclip_lat = coord.barycentrictrueecliptic.lat.deg
 
-    ## add in NES where it is less than WFD
-    nes_fp = nes_footprint(nside=nside)
+    # Any part of the NES that is too low gets pumped up
+    nes_indx = np.where(((eclip_lat < nes_dist_eclip_n) & (eclip_lat > nes_dist_eclip_s))
+                        & (dec > nes_south_limit))
+    nes_hp_map = ra*0
+    nes_hp_map[nes_indx] = 1
     for key in result:
-        nes_pix = np.where(nes_fp[key] > result[key])
-        result[key][nes_pix] = nes_fp[key][nes_pix]
+        result[key][np.where((nes_hp_map > 0) & (result[key] < nes_weights[key]))] = nes_weights[key]
 
-    et = ecliptic_target(nside=nside)
-    indx = np.where(et > 0)
+    if mc_wfd:
+        mag_clouds = magellanic_clouds_healpixels(nside)
+        mag_clouds_indx = np.where(mag_clouds > 0)[0]
+    else:
+        mag_clouds_indx = []
+    for key in result:
+        result[key][mag_clouds_indx] = wfd_weights[key]
 
     # Put in an outer disk bridge
-    outer_disk = np.where( (gal_lon < (180+15+60)) & (gal_lon > (180-15+60)) & (np.abs(gal_lat) < 20))
-
-    mag_clouds = magellanic_clouds_healpixels(nside)
-    mag_clouds_hpix = np.where(mag_clouds > 0)[0]
-
+    outer_disk = np.where((gal_lon < (outer_bridge_l + outer_bridge_width))
+                          & (gal_lon > (outer_bridge_l-outer_bridge_width))
+                          & (np.abs(gal_lat) < outer_bridge_alt))
     for key in result:
-        result[key][indx] = weights[key][0]
-        result[key][bulge] = weights[key][0]
-        result[key][outer_disk] = weights[key][0]
-        result[key][mag_clouds_hpix] = weights[key][0]
+        result[key][outer_disk] = wfd_weights[key]
 
-    # Let's paint all the north as non-zero    
-    for key in ['g', 'r', 'i']:
-        north = np.where((dec < np.radians(30)) & (result[key] == 0))
-        result[key][north] = 0.03
+    # Make a bulge go WFD
+    bulge_pix = np.where(((gal_lon > (360-bulge_lon_span)) | (gal_lon < bulge_lon_span)) &
+                         (np.abs(gal_lat) < bulge_alt_span))
+    for key in result:
+        result[key][bulge_pix] = wfd_weights[key]
 
+    # Set South ecliptic to the WFD values
+    ses_indx = np.where((np.abs(eclip_lat) < ses_dist_eclip) & (dec < nes_south_limit))
+    for key in result:
+        result[key][ses_indx] = wfd_weights[key]
+
+    # Let's paint all the north as non-zero
+    for key in north_weights:
+        north = np.where((dec < north_limit) & (result[key] == 0))
+        result[key][north] = north_weights[key]
 
     return result
 
 
-def greedy_footprints(nside=32):
+def greedy_footprints(nside=32, dist_to_eclip=15.):
     """Take the footprint, and mask out all the ecliptic stuff so we don't observe that in twilight """
     result = combo_dust_fp(nside=nside)
-    et = ecliptic_target(nside=nside, dec_max=40., north_ignore=False, dist_to_eclip=25.,)
-    indx = np.where(et > 0)
+    ra, dec = np.degrees(ra_dec_hp_map(nside=nside))
+    coord = SkyCoord(ra=ra*u.deg, dec=dec*u.deg)
+    eclip_lat = coord.barycentrictrueecliptic.lat.deg
+    indx = np.where(np.abs(eclip_lat) < dist_to_eclip)[0]
     for key in result:
         result[key][indx] = 0
         result[key][np.where(result[key] < .1)] = 0
