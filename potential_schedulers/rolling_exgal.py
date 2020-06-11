@@ -180,7 +180,7 @@ def gen_greedy_surveys(nside=32, season_modulo=None, day_offset=None, max_season
                        nexp=1, exptime=30., filters=['r', 'i', 'z', 'y'],
                        camera_rot_limits=[-80., 80.],
                        shadow_minutes=60., max_alt=76., moon_distance=30., ignore_obs='DD',
-                       m5_weight=3., footprint_weight=0.3, slewtime_weight=3.,
+                       m5_weight=6., footprint_weight=0.6, slewtime_weight=3.,
                        stayfilter_weight=3., roll_weight=3.):
     """
     Make a quick set of greedy surveys
