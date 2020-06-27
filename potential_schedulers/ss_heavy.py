@@ -3,7 +3,7 @@ import matplotlib.pylab as plt
 import healpy as hp
 from lsst.sims.featureScheduler.modelObservatory import Model_observatory
 from lsst.sims.featureScheduler.schedulers import Core_scheduler, simple_filter_sched
-from lsst.sims.featureScheduler.utils import standard_goals, create_season_offset
+from lsst.sims.featureScheduler.utils import standard_goals, Footprint
 import lsst.sims.featureScheduler.basis_functions as bf
 from lsst.sims.featureScheduler.surveys import (Greedy_survey, generate_dd_surveys,
                                                 Blob_survey)
@@ -66,12 +66,6 @@ def gen_greedy_surveys(nside=32, nexp=1, exptime=30., filters=['i', 'z', 'y'],
                            'seed': 42, 'camera': 'LSST', 'dither': True,
                            'survey_name': 'greedy'}
 
-    if footprints is None:
-        footprints = standard_goals(nside=nside)
-    sum_footprints = 0
-    for key in footprints:
-        sum_footprints += np.sum(footprints[key])
-
     surveys = []
     detailer = detailers.Camera_rot_detailer(min_rot=np.min(camera_rot_limits), max_rot=np.max(camera_rot_limits))
 
@@ -79,9 +73,8 @@ def gen_greedy_surveys(nside=32, nexp=1, exptime=30., filters=['i', 'z', 'y'],
         bfs = []
         bfs.append((bf.M5_diff_basis_function(filtername=filtername, nside=nside), m5_weight))
         bfs.append((bf.Footprint_basis_function(filtername=filtername,
-                                                footprint=footprints[filtername],
-                                                out_of_bounds_val=np.nan, nside=nside,
-                                                all_footprints_sum=sum_footprints), footprint_weight))
+                                                footprint=footprints,
+                                                out_of_bounds_val=np.nan, nside=nside), footprint_weight))
         bfs.append((bf.Slewtime_basis_function(filtername=filtername, nside=nside), slewtime_weight))
         bfs.append((bf.Strict_filter_basis_function(filtername=filtername), stayfilter_weight))
         # Masks, give these 0 weight
@@ -161,12 +154,6 @@ def generate_blobs(nside, nexp=1, exptime=30., filter1s=['u', 'u', 'g', 'r', 'i'
                           'smoothing_kernel': None, 'nside': nside, 'seed': 42, 'dither': True,
                           'twilight_scale': True}
 
-    if footprints is None:
-        footprints = standard_goals(nside=nside)
-    sum_footprints = 0
-    for key in footprints:
-        sum_footprints += np.sum(footprints[key])
-
     surveys = []
 
     times_needed = [pair_time, pair_time*2]
@@ -187,36 +174,33 @@ def generate_blobs(nside, nexp=1, exptime=30., filter1s=['u', 'u', 'g', 'r', 'i'
 
         if filtername2 is not None:
             bfs.append((bf.Footprint_basis_function(filtername=filtername,
-                                                    footprint=footprints[filtername],
-                                                    out_of_bounds_val=np.nan, nside=nside,
-                                                    all_footprints_sum=sum_footprints), footprint_weight/2.))
+                                                    footprint=footprints,
+                                                    out_of_bounds_val=np.nan, nside=nside), footprint_weight/2.))
             bfs.append((bf.Footprint_basis_function(filtername=filtername2,
-                                                    footprint=footprints[filtername2],
-                                                    out_of_bounds_val=np.nan, nside=nside,
-                                                    all_footprints_sum=sum_footprints), footprint_weight/2.))
+                                                    footprint=footprints,
+                                                    out_of_bounds_val=np.nan, nside=nside), footprint_weight/2.))
         else:
             bfs.append((bf.Footprint_basis_function(filtername=filtername,
-                                                    footprint=footprints[filtername],
-                                                    out_of_bounds_val=np.nan, nside=nside,
-                                                    all_footprints_sum=sum_footprints), footprint_weight))
+                                                    footprint=footprints,
+                                                    out_of_bounds_val=np.nan, nside=nside), footprint_weight))
 
         bfs.append((bf.Slewtime_basis_function(filtername=filtername, nside=nside), slewtime_weight))
         bfs.append((bf.Strict_filter_basis_function(filtername=filtername), stayfilter_weight))
 
         if filtername2 is not None:
             bfs.append((bf.N_obs_per_year_basis_function(filtername=filtername, nside=nside,
-                                                         footprint=footprints[filtername],
+                                                         footprint=footprints.get_footprint(filtername),
                                                          n_obs=n_obs_template, season=season,
                                                          season_start_hour=season_start_hour,
                                                          season_end_hour=season_end_hour), template_weight/2.))
             bfs.append((bf.N_obs_per_year_basis_function(filtername=filtername2, nside=nside,
-                                                         footprint=footprints[filtername2],
+                                                         footprint=footprints.get_footprint(filtername2),
                                                          n_obs=n_obs_template, season=season,
                                                          season_start_hour=season_start_hour,
                                                          season_end_hour=season_end_hour), template_weight/2.))
         else:
             bfs.append((bf.N_obs_per_year_basis_function(filtername=filtername, nside=nside,
-                                                         footprint=footprints[filtername],
+                                                         footprint=footprints.get_footprint(filtername),
                                                          n_obs=n_obs_template, season=season,
                                                          season_start_hour=season_start_hour,
                                                          season_end_hour=season_end_hour), template_weight))
@@ -278,19 +262,19 @@ def ss_footprints(nside=32, dist_to_eclip=25.):
 
 
 def generate_twilight_neo(nside, night_pattern=None, nexp=1, exptime=1, camera_rot_limits=[-80., 80.],
-                          footprint_weight=0.1, slewtime_weight=3., stayfilter_weight=3.):
+                          footprint_weight=0.1, slewtime_weight=3., stayfilter_weight=3., mjd_start=0,
+                          sun_RA_start=0.):
 # XXX finish eliminating magic numbers and document this one
     slew_estimate = 4.5
     filters = 'riz'
     survey_name = 'twilight_neo'
     footprint = ecliptic_target(nside=nside)
-    footprints = {}
+    footprints_hp = {}
     for filtername in filters:
-        footprints[filtername] = footprint
-
-    sum_footprints = 0
-    for key in footprints:
-        sum_footprints += np.sum(footprints[key])
+        footprints_hp[filtername] = footprint
+    footprints = Footprint(mjd_start, sun_RA_start=sun_RA_start, nside=nside)
+    for i, key in enumerate(footprints_hp):
+        footprints.footprints[i, :] = footprints_hp[key]
 
     surveys = []
     for filtername in filters:
@@ -301,9 +285,8 @@ def generate_twilight_neo(nside, night_pattern=None, nexp=1, exptime=1, camera_r
         bfs = []
 
         bfs.append((bf.Footprint_basis_function(filtername=filtername,
-                                                footprint=footprints[filtername],
-                                                out_of_bounds_val=np.nan, nside=nside,
-                                                all_footprints_sum=sum_footprints), footprint_weight))
+                                                footprint=footprints,
+                                                out_of_bounds_val=np.nan, nside=nside), footprint_weight))
 
         bfs.append((bf.Slewtime_basis_function(filtername=filtername, nside=nside), slewtime_weight))
         bfs.append((bf.Strict_filter_basis_function(filtername=filtername), stayfilter_weight))
@@ -389,7 +372,12 @@ if __name__ == "__main__":
     extra = [False]*(night_mod-1)
     night_pattern.extend(extra)
 
-    footprints = ss_footprints(nside=nside)
+    footprints_hp = ss_footprints(nside=nside)
+    observatory = Model_observatory(nside=nside)
+    conditions = observatory.return_conditions()
+    footprints = Footprint(conditions.mjd_start, sun_RA_start=conditions.sun_RA_start, nside=nside)
+    for i, key in enumerate(footprints_hp):
+        footprints.footprints[i, :] = footprints_hp[key]
 
     # Set up the DDF surveys to dither
     dither_detailer = detailers.Dither_detailer(per_night=per_night, max_dither=max_dither)
@@ -398,7 +386,8 @@ if __name__ == "__main__":
 
     greedy = gen_greedy_surveys(nside, nexp=nexp, footprints=footprints)
     blobs = generate_blobs(nside, nexp=nexp, footprints=footprints)
-    neo = generate_twilight_neo(nside, night_pattern=night_pattern)
+    neo = generate_twilight_neo(nside, night_pattern=night_pattern, mjd_start=conditions.mjd_start,
+                                sun_RA_start=conditions.sun_RA_start)
     surveys = [ddfs, blobs, neo, greedy]
     run_sched(surveys, survey_length=survey_length, verbose=verbose,
               fileroot=os.path.join(outDir, fileroot+file_end), extra_info=extra_info,
