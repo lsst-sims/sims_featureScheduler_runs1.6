@@ -1,7 +1,7 @@
 python ../scimaf_dir.py --db barebones_v1.6_10yrs.db
 python ../scimaf_dir.py --db mw_heavy_v1.6_10yrs.db
 python ../scimaf_dir.py --db baseline_nexp1_v1.6_10yrs.db                   
-python ../scimaf_dir.py --db rolling_exgal_mod2_dust_sdf_0.20_v1.6_10yrs.db
+python ../scimaf_dir.py --db rolling_exgal_mod2_dust_sdf_0.80_v1.6_10yrs.db
 python ../scimaf_dir.py --db baseline_nexp2_v1.6_10yrs.db   
 python ../scimaf_dir.py --db baseline_nexp2_scaleddown_v1.6_10yrs.db                
 python ../scimaf_dir.py --db ss_heavy_v1.6_10yrs.db
@@ -11,7 +11,7 @@ python ../scimaf_dir.py --db combo_dust_v1.6_10yrs.db
 python ../glance_dir.py --db barebones_v1.6_10yrs.db
 python ../glance_dir.py --db mw_heavy_v1.6_10yrs.db
 python ../glance_dir.py --db baseline_nexp1_v1.6_10yrs.db                   
-python ../glance_dir.py --db rolling_exgal_mod2_dust_sdf_0.20_v1.6_10yrs.db
+python ../glance_dir.py --db rolling_exgal_mod2_dust_sdf_0.80_v1.6_10yrs.db
 python ../glance_dir.py --db baseline_nexp2_v1.6_10yrs.db  
 python ../glance_dir.py --db baseline_nexp2_scaleddown_v1.6_10yrs.db                  
 python ../glance_dir.py --db ss_heavy_v1.6_10yrs.db
