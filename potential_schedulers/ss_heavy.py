@@ -22,7 +22,7 @@ def gen_greedy_surveys(nside=32, nexp=1, exptime=30., filters=['i', 'z', 'y'],
                        camera_rot_limits=[-80., 80.],
                        shadow_minutes=60., max_alt=76., moon_distance=30., ignore_obs=['DD', 'twilight_neo'],
                        m5_weight=3., footprint_weight=0.3, slewtime_weight=3.,
-                       stayfilter_weight=3., footprints=None):
+                       stayfilter_weight=3., ecliptic_weight=-6., footprints=None, distance_to_eclip=25.):
     """
     Make a quick set of greedy surveys
 
@@ -59,6 +59,8 @@ def gen_greedy_surveys(nside=32, nexp=1, exptime=30., filters=['i', 'z', 'y'],
         The weight on the slewtime basis function
     stayfilter_weight : float (3.)
         The weight on basis function that tries to stay avoid filter changes.
+    ecliptic_weight : float (-6.)
+        The weight to put on the ecliptic region
     """
     # Define the extra parameters that are used in the greedy survey. I
     # think these are fairly set, so no need to promote to utility func kwargs
@@ -77,6 +79,7 @@ def gen_greedy_surveys(nside=32, nexp=1, exptime=30., filters=['i', 'z', 'y'],
                                                 out_of_bounds_val=np.nan, nside=nside), footprint_weight))
         bfs.append((bf.Slewtime_basis_function(filtername=filtername, nside=nside), slewtime_weight))
         bfs.append((bf.Strict_filter_basis_function(filtername=filtername), stayfilter_weight))
+        bfs.append((bf.Ecliptic_basis_function(nside=nside, distance_to_eclip=distance_to_eclip), ecliptic_weight))
         # Masks, give these 0 weight
         bfs.append((bf.Zenith_shadow_mask_basis_function(nside=nside, shadow_minutes=shadow_minutes,
                                                          max_alt=max_alt), 0))
