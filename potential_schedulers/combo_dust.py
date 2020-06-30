@@ -327,7 +327,7 @@ def make_rolling_footprints(mjd_start=59853.5, sun_RA_start=3.27717639, nslice=2
 
     down = 1.-scale
     up = nslice - down*(nslice-1)
-    start = [0., 1.]
+    start = [1., 1., 1.]
     end = [1., 1., 1., 1., 1., 1.]
     if nslice == 2:
         rolling = [up, down, up, down, up, down]
