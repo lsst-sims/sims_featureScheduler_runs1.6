@@ -1,0 +1,4 @@
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/even_filters/even_filters.py --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/even_filters
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/even_filters/even_filters_alt.py --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/even_filters
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/even_filters/even_filters_alt_g.py --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/even_filters
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/even_filters/even_filters_g.py --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/even_filters
