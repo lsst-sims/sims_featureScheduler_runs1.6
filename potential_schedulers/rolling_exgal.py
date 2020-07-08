@@ -450,6 +450,8 @@ if __name__ == "__main__":
     parser.add_argument("--maxDither", type=float, default=0.7, help="Dither size for DDFs (deg)")
     parser.add_argument("--nslice", type=int, default=2)
     parser.add_argument("--scale", type=float, default=0.8)
+    parser.add_argument("--nexp", type=int, default=1)
+
 
     args = parser.parse_args()
     survey_length = args.survey_length  # Days
@@ -458,10 +460,10 @@ if __name__ == "__main__":
     max_dither = args.maxDither
     scale = args.scale
     nslice = args.nslice
+    nexp = args.nexp
 
     nside = 32
     per_night = True  # Dither DDF per night
-    nexp = 1  # All observations
     mixed_pairs = True  # For the blob scheduler
     camera_ddf_rot_limit = 75.
 
@@ -478,6 +480,8 @@ if __name__ == "__main__":
     extra_info['file executed'] = os.path.realpath(__file__)
 
     fileroot = 'rolling_exgal_mod%i_dust_sdf_%.2f_' % (nslice, scale)
+    if nexp != 1:
+        fileroot += 'nexp%i_' % nexp
     file_end = 'v1.6_'
 
     # Mark position of the sun at the start of the survey. Usefull for rolling cadence.

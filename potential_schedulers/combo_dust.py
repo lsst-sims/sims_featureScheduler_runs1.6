@@ -366,6 +366,7 @@ def make_rolling_footprints(mjd_start=59853.5, sun_RA_start=3.27717639, nslice=2
     result = Footprints([fp_non_wfd] + rolling_footprints)
     return result
 
+
 def combo_dust_fp(nside=32,
                   wfd_weights={'u': 0.31, 'g': 0.44, 'r': 1., 'i': 1., 'z': 0.9, 'y': 0.9},
                   wfd_dust_weights={'u': 0.13, 'g': 0.13, 'r': 0.25, 'i': 0.25, 'z': 0.25, 'y': 0.25},
@@ -460,8 +461,6 @@ def combo_dust_fp(nside=32,
     return result
 
 
-
-
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
@@ -472,6 +471,7 @@ if __name__ == "__main__":
     parser.add_argument("--maxDither", type=float, default=0.7, help="Dither size for DDFs (deg)")
     parser.add_argument("--nslice", type=int, default=2)
     parser.add_argument("--scale", type=float, default=0.8)
+    parser.add_argument("--nexp", type=int, default=1)
 
     args = parser.parse_args()
     survey_length = args.survey_length  # Days
@@ -480,10 +480,10 @@ if __name__ == "__main__":
     max_dither = args.maxDither
     scale = args.scale
     nslice = args.nslice
+    nexp = args.nexp
 
     nside = 32
     per_night = True  # Dither DDF per night
-    nexp = 1  # All observations
     mixed_pairs = True  # For the blob scheduler
     camera_ddf_rot_limit = 75.
 
@@ -499,7 +499,9 @@ if __name__ == "__main__":
 
     extra_info['file executed'] = os.path.realpath(__file__)
 
-    fileroot = 'combo_dust_' 
+    fileroot = 'combo_dust_'
+    if nexp != 1:
+        fileroot += 'nexp%i_' % nexp
     file_end = 'v1.6_'
 
     # Mark position of the sun at the start of the survey. Usefull for rolling cadence.
@@ -516,7 +518,6 @@ if __name__ == "__main__":
     footprints = make_rolling_footprints(mjd_start=conditions.mjd_start,
                                          sun_RA_start=conditions.sun_RA_start, nslice=nslice, scale=scale,
                                          nside=nside)
-
 
     greedy = gen_greedy_surveys(nside, nexp=nexp, footprints=footprints)
     blobs = generate_blobs(nside, nexp=nexp, footprints=footprints)

@@ -369,6 +369,8 @@ if __name__ == "__main__":
     extra_info['file executed'] = os.path.realpath(__file__)
 
     fileroot = 'ss_heavy_'
+    if nexp != 1:
+        fileroot += 'nexp%i_' % nexp
     file_end = 'v1.6_'
 
     night_pattern = [True]

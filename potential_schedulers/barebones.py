@@ -265,6 +265,7 @@ if __name__ == "__main__":
     parser.add_argument("--survey_length", type=float, default=365.25*10)
     parser.add_argument("--outDir", type=str, default="")
     parser.add_argument("--maxDither", type=float, default=0.7, help="Dither size for DDFs (deg)")
+    parser.add_argument("--nexp", type=int, default=1)
     parser.add_argument("--moon_illum_limit", type=float, default=40., help="illumination limit to remove u-band")
 
     args = parser.parse_args()
@@ -273,10 +274,10 @@ if __name__ == "__main__":
     verbose = args.verbose
     max_dither = args.maxDither
     illum_limit = args.moon_illum_limit
+    nexp = args.nexp
 
     nside = 32
     per_night = True  # Dither DDF per night
-    nexp = 1  # All observations
     camera_ddf_rot_limit = 0.
 
     extra_info = {}
@@ -292,6 +293,8 @@ if __name__ == "__main__":
     extra_info['file executed'] = os.path.realpath(__file__)
 
     fileroot = 'barebones_'
+    if nexp != 1:
+        fileroot += 'nexp%i_' % nexp
     file_end = 'v1.6_'
 
     footprints_hp = simple_footprint()
