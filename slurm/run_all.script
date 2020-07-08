@@ -1,0 +1,23 @@
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/even_filters/even_filters.py --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/even_filters
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/even_filters/even_filters_alt.py --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/even_filters
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/even_filters/even_filters_alt_g.py --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/even_filters
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/even_filters/even_filters_g.py --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/even_filters
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers/baseline.py --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers/baseline.py --nexp 2 --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers/baseline.py --nexp 2 --scale_down --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers/barebones.py --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers/rolling_exgal.py --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers/dm_heavy.py --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers/ddf_heavy.py --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers/mw_heavy.py --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers/ss_heavy.py --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers/combo_dust.py --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/potential_schedulers
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/rolling_fpo/rolling_fpo.py --nslice 2 --scale 0.8 --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/rolling_fpo
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/rolling_fpo/rolling_fpo.py --nslice 3 --scale 0.8 --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/rolling_fpo
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/rolling_fpo/rolling_fpo.py --nslice 6 --scale 0.8 --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/rolling_fpo
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/rolling_fpo/rolling_fpo.py --nslice 2 --scale 0.9 --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/rolling_fpo
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/rolling_fpo/rolling_fpo.py --nslice 3 --scale 0.9 --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/rolling_fpo
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/rolling_fpo/rolling_fpo.py --nslice 6 --scale 0.9 --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/rolling_fpo
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/rolling_fpo/rolling_fpo.py --nslice 2 --scale 0.97 --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/rolling_fpo
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/rolling_fpo/rolling_fpo.py --nslice 3 --scale 0.97 --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/rolling_fpo
+python /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/rolling_fpo/rolling_fpo.py --nslice 6 --scale 0.97 --outDir /gscratch/astro/yoachim/git_repos/sims_featureScheduler_runs1.6/rolling_fpo
