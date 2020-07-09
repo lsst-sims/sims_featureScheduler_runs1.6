@@ -5,8 +5,6 @@ Simulated potential strategies for the Rubin Observatory
 
 ## potential_scedulers
 
-For most, try to tune so we get around 875-900 visits in the WFD area. 
-
 ### Bare Bones
 
 This is an intentionally "bad" simulation, where we only strive to meet the SRD requirements, but have not particularly crafted a useful strategy for science. This is a good example of just how deep the WFD area could possibly get.
@@ -28,7 +26,7 @@ Minuses:
 
 ### Classic Baseline
 
-The lastest iteration of our baseline survey. With 1 and 2 snaps per visit.
+The lastest iteration of our baseline survey. Run with 1 and 2 snaps per visit.
 
 ### Rolling Exgal
 
@@ -44,13 +42,13 @@ A simulation that is inspired by DM considerations
 * Get DCR images in ugr
 * g,r,i images of the whole sky in good seeing 
 
-##3 MW local group heavy
+### MW local group heavy
 
-Cover the bulge, galactic anti-center and LMC/SMC in depth.
+Cover the bulge, galactic anti-center and LMC/SMC as part of the WFD
 
 ### DDF heavy
 
-Give as much time as possible to the DDF surveys.  Looks like it might have hit the limit of what they can do running once per day? Can make sequences longer and/or extend seasons.
+Give as much time as possible to the DDF surveys. 
 
 ### Solar System Heavy
 
@@ -70,3 +68,13 @@ A possibly better baseline to build off of.
 * Coverage of dusty and high airmass SCP, at about 300 total visits.
 
 I think the 20k WFD should make it easier to recover in the event of extended downtime or pathological weather. There are WFD pixels at all RA that could be cut, and their remaining time re-allocated to areas that would otherwise not make it to the SRD value.
+
+## Othe experiments
+
+### Even Filters
+
+In the baseline, there is a strong preference to observe y-band in bright time. Here we run a few experiments letting bluer filters execute in bright time. We also mix in some alt-sched like alternating between north and south.
+
+### Rolling FPO
+
+Initial experiments with the new and improved rolling cadence using time-variable footprint objects. Could still need some debugging, but looks like an improvement over the v1.5 rolling experiments.
